@@ -1,0 +1,13 @@
+.tippy-box {
+    background-color: #34495e !important; /* Cambia il colore di sfondo */
+    color: white !important; /* Cambia il colore del testo */
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .tippy-arrow {
+    color: #71b095 !important; /* Cambia il colore della freccia */
+  }
+  
