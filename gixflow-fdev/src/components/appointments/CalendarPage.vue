@@ -146,6 +146,13 @@
                   </select>
                 </label>
               </fieldset>
+              <fieldset class="meta-info">
+  <legend>Informazioni di Tracciamento</legend>
+  <p><strong>Creato il:</strong> {{ formatDateTime(selectedAppointment.creation_date) }}</p>
+  <p><strong>Creato da:</strong> {{ selectedAppointment.created_by_name }}</p>
+  <p><strong>Ultima modifica:</strong> {{ formatDateTime(selectedAppointment.last_modified_date) }}</p>
+  <p><strong>Modificato da:</strong> {{ selectedAppointment.updated_by_name }}</p>
+</fieldset>
             </div>
           </div>
 
@@ -348,6 +355,11 @@ export default defineComponent({
 
             status_id: appointment.status_id || "",
             notes: appointment.notes || "",
+
+            creation_date: appointment.creation_date || null,
+            last_modified_date: appointment.last_modified_date || null,
+            created_by_name: appointment.created_by_name || "Non specificato",
+            updated_by_name: appointment.updated_by_name || "Nessuna modifica",
           };
         });
 
@@ -389,6 +401,7 @@ export default defineComponent({
           agent_id: this.selectedAppointment.agent_id,
           operator_id: this.selectedAppointment.operator_id,
           status_id: this.selectedAppointment.status,
+          updated_by: this.currentUserId,
         };
 
         await axios.put(
@@ -437,6 +450,10 @@ export default defineComponent({
         operator_id: event.extendedProps.operator_id || null,
         status:
           event.extendedProps.status_id || event.extendedProps.status || null,
+          creation_date: event.extendedProps.creation_date || null,
+        last_modified_date: event.extendedProps.last_modified_date || null,
+        created_by_name: event.extendedProps.created_by_name || "Non specificato",
+        updated_by_name: event.extendedProps.updated_by_name || "Nessuna modifica",  
       };
 
       this.isModalOpen = true;
@@ -536,6 +553,11 @@ export default defineComponent({
           agent_id: appt.agent_id || null,
           operator_id: appt.operator_id || null,
           status: appt.status || appt.status_id || null,
+
+          creation_date: appt.creation_date || null,
+          last_modified_date: appt.last_modified_date || null,
+          created_by_name: appt.created_by_name || "Non specificato",
+          updated_by_name: appt.updated_by_name || "Nessuna modifica",
         },
       }));
     },

@@ -58,6 +58,7 @@ exports.createAppointment = async (req, res) => {
       agent_id: data.agent_id,
       status_id: data.status_id,
       notes: data.notes || "",
+      created_by: req.user?.id || null,
     };
 
     // Crea l'appuntamento
@@ -113,6 +114,7 @@ exports.updateAppointment = async (req, res) => {
       agent_id: updates.agent_id || null,
       operator_id: updates.operator_id || null,
       status_id: updates.status_id || null,
+      updated_by: req.user?.id || null,
     };  
     
 
@@ -141,6 +143,7 @@ exports.updateAppointmentClickFC = async (req, res) => {
       agent_id: updates.agent_id || null,
       operator_id: updates.operator_id || null,
       status_id: updates.status_id || null,
+      updated_by: req.user?.id || null,
     };
     
     
@@ -170,6 +173,7 @@ exports.updateAppointmentDrop = async (req, res) => {
       agent_id: updates.agent_id || null,
       operator_id: updates.operator_id || null,
       status_id: updates.status_id || null,
+      updated_by: req.user?.id || null,
     };
 
     const result = await Appointment.updateAppointmentDrop(
@@ -231,7 +235,11 @@ exports.exportAppointmentsCSV = async (req, res) => {
       "client_cap",
       "status",
       "notes",
-    ];
+      "creation_date",
+      "last_modified_date",
+      "created_by_name",
+      "updated_by_name"
+          ];
 
     const opts = { fields };
     const parser = new Parser(opts);
@@ -344,4 +352,3 @@ exports.getNextWorkdayAppointments = async (agent_id) => {
     return [];
   }
 };
-

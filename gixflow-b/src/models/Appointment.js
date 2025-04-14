@@ -15,6 +15,7 @@ class Appointment {
         agent_id,
         status_id,
         notes,
+        created_by,
       } = data;
 
       // Convertiamo la data in formato "Europe/Rome" PRIMA di salvarla nel DB
@@ -34,8 +35,9 @@ class Appointment {
           operator_id,
           agent_id,
           status_id,
-          notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          notes,
+          created_by
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const [result] = await conn.query(query, [
@@ -47,6 +49,7 @@ class Appointment {
         agent_id,
         status_id,
         notes,
+        created_by
       ]);
 
       return result;
@@ -59,7 +62,7 @@ class Appointment {
   }
 
   // Ottiene l'elenco di tutti gli appuntamenti
-  static async getAllAppointments() {
+ /*  static async getAllAppointments() {
     const conn = await pool.getConnection();
     try {
       const query = `SELECT id, date_start, date_end FROM appointments`;
@@ -75,7 +78,7 @@ class Appointment {
           .utc(row.date_end)
           .tz("Europe/Rome")
           .format("YYYY-MM-DD HH:mm:ss");
-      });
+        });
 
       return rows;
     } catch (error) {
@@ -84,7 +87,52 @@ class Appointment {
     } finally {
       conn.release();
     }
-  }
+  } */
+
+    static async getAllAppointments() {
+      const conn = await pool.getConnection();
+      try {
+        const query = `
+          SELECT id, date_start, date_end, creation_date, last_modified_date
+          FROM appointments
+        `;
+        const [rows] = await conn.query(query);
+    
+        rows.forEach((row) => {
+          row.date_start = moment
+            .utc(row.date_start)
+            .tz("Europe/Rome")
+            .format("YYYY-MM-DD HH:mm:ss");
+    
+          row.date_end = moment
+            .utc(row.date_end)
+            .tz("Europe/Rome")
+            .format("YYYY-MM-DD HH:mm:ss");
+    
+          if (row.creation_date) {
+            row.creation_date = moment
+              .utc(row.creation_date)
+              .tz("Europe/Rome")
+              .format("YYYY-MM-DD HH:mm:ss");
+          }
+    
+          if (row.last_modified_date) {
+            row.last_modified_date = moment
+              .utc(row.last_modified_date)
+              .tz("Europe/Rome")
+              .format("YYYY-MM-DD HH:mm:ss");
+          }
+        });
+    
+        return rows;
+      } catch (error) {
+        console.error("Errore nel recupero degli appuntamenti:", error);
+        throw error;
+      } finally {
+        conn.release();
+      }
+    }
+    
 
   // Ottiene l'elenco di tutti gli appuntamenti con i dettagli dei clienti
   static async getAllAppointmentsWithClients() {
@@ -92,31 +140,43 @@ class Appointment {
     try {
       const query = `
           SELECT 
-            a.id, 
-            a.date_start, 
-            a.date_end, 
-            a.operator_id, 
-            a.agent_id, 
-            a.status_id, 
-            s.name AS status_name,
-            a.notes, 
-            CONCAT(u.cognome, ' ', u.nome) AS operator_name,
-            CONCAT(ua.cognome, ' ', ua.nome) AS agent_name, 
-            c.ragsoc AS client_name,
-            c.forma_giuridica_id,
-            lf.name AS client_forma_giuridica,
-            c.telefono AS client_phone,
-            c.indirizzo AS client_address,
-            c.city AS client_city,
-            c.provincia AS client_province,
-            c.cap AS client_cap
-          FROM appointments a
-          LEFT JOIN clients c ON a.client_id = c.id
-          LEFT JOIN legal_forms lf ON c.forma_giuridica_id = lf.id
-          LEFT JOIN users u ON a.operator_id = u.id
-          LEFT JOIN users ua ON a.agent_id = ua.id
-          LEFT JOIN appointment_status s ON a.status_id = s.id;
-        `;
+        a.id, 
+        a.date_start, 
+        a.date_end, 
+        a.operator_id, 
+        a.agent_id, 
+        a.status_id, 
+        s.name AS status_name,
+        a.notes, 
+        CONCAT(u.cognome, ' ', u.nome) AS operator_name,
+        CONCAT(ua.cognome, ' ', ua.nome) AS agent_name, 
+        c.ragsoc AS client_name,
+        c.forma_giuridica_id,
+        lf.name AS client_forma_giuridica,
+        c.telefono AS client_phone,
+        c.indirizzo AS client_address,
+        c.city AS client_city,
+        c.provincia AS client_province,
+        c.cap AS client_cap,
+
+        a.creation_date,
+        a.last_modified_date,
+        a.created_by,
+        a.updated_by,
+
+        CONCAT(cb.cognome, ' ', cb.nome) AS created_by_name,
+        CONCAT(ub.cognome, ' ', ub.nome) AS updated_by_name
+
+      FROM appointments a
+      LEFT JOIN clients c ON a.client_id = c.id
+      LEFT JOIN legal_forms lf ON c.forma_giuridica_id = lf.id
+      LEFT JOIN users u ON a.operator_id = u.id
+      LEFT JOIN users ua ON a.agent_id = ua.id
+      LEFT JOIN appointment_status s ON a.status_id = s.id
+
+      LEFT JOIN users cb ON a.created_by = cb.id
+      LEFT JOIN users ub ON a.updated_by = ub.id
+    `;
       const [rows] = await conn.query(query);
       return rows;
     } catch (error) {
@@ -153,12 +213,25 @@ class Appointment {
           ? new Date(isoDate).toISOString().slice(0, 19).replace("T", " ")
           : null;
 
+      /* const sanitizedUpdates = {
+        ...existingData,
+        ...updates,
+        date_start: updates.date_start || existingData.date_start,
+        date_end: updates.date_end || existingData.date_end,
+      }; */
+
       const sanitizedUpdates = {
         ...existingData,
         ...updates,
         date_start: updates.date_start || existingData.date_start,
         date_end: updates.date_end || existingData.date_end,
+        updated_by: updates.updated_by || null,
       };
+      
+      // ❌ Rimuovi campi gestiti automaticamente da MySQL
+      delete sanitizedUpdates.last_modified_date;
+      
+      
 
       // Costruisci la query dinamica
       const fields = Object.keys(sanitizedUpdates)

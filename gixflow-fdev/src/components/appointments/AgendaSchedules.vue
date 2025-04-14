@@ -364,7 +364,7 @@ export default {
           `${process.env.VUE_APP_API_URL}/notifications/send-agenda`,
           {
             agent_id: this.manualAgent,
-            date: formattedDate, // 📅 Invia la data nel formato corretto
+            date: formattedDate, // Invia la data nel formato corretto
           }
         );
 

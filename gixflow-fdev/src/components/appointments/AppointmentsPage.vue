@@ -205,7 +205,6 @@
 
       <label>
         Data Inizio:
-        <!-- <input type="date" v-model="filters.dateStart" /> -->
         <flat-pickr
           v-model="filters.dateStart"
           :config="configDate"
@@ -215,7 +214,6 @@
 
       <label>
         Data Fine:
-        <!-- <input type="date" v-model="filters.dateEnd" /> -->
         <flat-pickr
           v-model="filters.dateEnd"
           :config="configDate"
@@ -434,11 +432,7 @@
 
                 <label>
                   Data Inizio:
-                  <!-- <input
-                    type="datetime-local"
-                    v-model="selectedAppointment.date_start"
-                    required
-                  /> -->
+
                   <flat-pickr
                     v-model="selectedAppointment.date_start"
                     :config="configDateTime"
@@ -447,11 +441,7 @@
                 </label>
                 <label>
                   Data Fine:
-                  <!-- <input
-                    type="datetime-local"
-                    v-model="selectedAppointment.date_end"
-                    required
-                  /> -->
+
                   <flat-pickr
                     v-model="selectedAppointment.date_end"
                     :config="configDateTime"
@@ -470,6 +460,25 @@
                     </option>
                   </select>
                 </label>
+              </fieldset>
+              <fieldset class="meta-info">
+                <legend>Meta Dati</legend>
+                <p>
+                  <strong>Creato il:</strong>
+                  {{ formatDateTime(selectedAppointment.creation_date) }}
+                </p>
+                <p>
+                  <strong>Creato da:</strong>
+                  {{ selectedAppointment.created_by_name }}
+                </p>
+                <p>
+                  <strong>Ultima modifica:</strong>
+                  {{ formatDateTime(selectedAppointment.last_modified_date) }}
+                </p>
+                <p>
+                  <strong>Modificato da:</strong>
+                  {{ selectedAppointment.updated_by_name }}
+                </p>
               </fieldset>
             </div>
           </div>
@@ -509,17 +518,14 @@ import "flatpickr/dist/flatpickr.min.css";
 import { Italian } from "flatpickr/dist/l10n/it.js";
 import "flatpickr/dist/themes/dark.css";
 
-
 export default {
-
-
   components: {
     FlatPickr,
   },
 
   setup() {
     const configDate = ref({
-      dateFormat: "d/m/Y",
+      dateFormat: "Y-m-d", // Formato coerente con il backend
       altInput: true,
       altFormat: "d/m/Y",
       locale: Italian,
@@ -534,8 +540,8 @@ export default {
       locale: Italian,
     });
 
-    return { configDate, configDateTime }; // 🔥 manualDate NON è più qui
-  }, 
+    return { configDate, configDateTime };
+  },
   name: "AppointmentsPage",
   data() {
     return {
@@ -658,8 +664,6 @@ export default {
           `${process.env.VUE_APP_API_URL}/appointments`
         );
 
-       // console.log("📡 Appuntamenti ricevuti dal backend:", response.data);
-
         this.appointments = response.data.map((appointment) => {
           return {
             id: appointment.id,
@@ -682,6 +686,11 @@ export default {
             status_id: appointment.status_id || "",
             status_name: appointment.status_name || "N/A",
             notes: appointment.notes || "",
+
+            creation_date: appointment.creation_date || null,
+            last_modified_date: appointment.last_modified_date || null,
+            created_by_name: appointment.created_by_name || "Non specificato",
+            updated_by_name: appointment.updated_by_name || "Nessuna modifica",
           };
         });
 
@@ -713,7 +722,6 @@ export default {
           allUsers.filter((user) => user.role_id === 2)
         );
       } catch (error) {
-        //alert("Errore durante il caricamento degli utenti.");
         this.$toast.show("Errore durante il caricamento degli utenti.", {
           position: "bottom-right",
           duration: 5000,
@@ -729,7 +737,6 @@ export default {
           !this.newAppointment.client_phone ||
           this.newAppointment.client_phone.trim() === ""
         ) {
-          //alert("Il campo Telefono è obbligatorio.");
           this.$toast.show("Il campo Telefono è obbligatorio.", {
             position: "bottom-right",
             duration: 5000,
@@ -754,12 +761,10 @@ export default {
           notes: this.newAppointment.notes || "",
         };
 
-        // Invia la richiesta al server
         await axios.post(
           `${process.env.VUE_APP_API_URL}/appointments`,
           newAppointmentData
         );
-        //alert("Appuntamento creato con successo!");
         this.$toast.show("Appuntamento creato con successo.", {
           position: "bottom-right",
           duration: 5000,
@@ -769,7 +774,6 @@ export default {
         this.fetchAppointments(); // Aggiorna la lista degli appuntamenti
       } catch (error) {
         console.error("Errore durante la creazione dell'appuntamento:", error);
-        //alert("Errore durante la creazione dell'appuntamento.");
         this.$toast.show("Errore durante la creazione dell'appuntamento.", {
           position: "bottom-right",
           duration: 5000,
@@ -823,7 +827,6 @@ export default {
             `${process.env.VUE_APP_API_URL}/appointments/${id}`
           );
           this.fetchAppointments();
-          //alert("Appuntamento eliminato con successo.");
           this.$toast.show("Appuntamento eliminato con successo.", {
             position: "bottom-right",
             duration: 5000,
@@ -834,7 +837,6 @@ export default {
             "Errore durante l'eliminazione dell'appuntamento:",
             error
           );
-          //alert("Errore durante l'eliminazione dell'appuntamento.");
           this.$toast.show("Errore durante l'eliminazione dell'appuntamento.", {
             position: "bottom-right",
             duration: 5000,
@@ -849,7 +851,7 @@ export default {
         const response = await axios.get(
           `${process.env.VUE_APP_API_URL}/appointments/export`,
           {
-            responseType: "blob", // Necessario per scaricare il file
+            responseType: "blob",
           }
         );
 
@@ -1030,8 +1032,6 @@ export default {
 
     formatDateTime(dateString) {
       if (!dateString) return "N/A";
-
-     // console.log("📅 Stringa originale ricevuta:", dateString);
 
       // Usa moment.utc() per evitare conversioni di fuso automatiche
       return moment.utc(dateString).format("DD/MM/YYYY HH:mm");
