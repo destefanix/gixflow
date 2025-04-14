@@ -142,14 +142,7 @@ legend {
       TABLE STYLES
       ========================== */
 
-.table,
-.user-table,
-.appointments-table,
-.contracts-table,
-.api-keys,
-.logs-table,
-.edit-table,
-.commissioning-table {
+.table {  
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
@@ -157,14 +150,7 @@ legend {
   margin-bottom: 20px;
 }
 
-.table th,
-.user-table th,
-.appointments-table th,
-.contracts-table th,
-.api-keys th,
-.logs-table th,
-.edit-table th,
-.commissioning-table th {
+.table th {
   background-color: var(--primary-color);
   color: white;
   text-align: left;
@@ -173,14 +159,7 @@ legend {
   font-weight: bold;
 }
 
-.table td,
-.user-table td,
-.appointments-table td,
-.contracts-table td,
-.api-keys td,
-.logs-table td,
-.edit-table td,
-.commissioning-table td {
+.table td {
   border: 1px solid var(--border-color);
   padding: 10px;
   text-align: left;
@@ -189,79 +168,30 @@ legend {
   white-space: nowrap;
 }
 
-.table th:first-child,
-.user-table th:first-child,
-.appointments-table th:first-child,
-.contracts-table th:first-child,
-.api-keys th:first-child,
-.logs-table th:first-child,
-.edit-table th:first-child,
-.commissioning-table th:first-child {
+.table th:first-child {
   border-top-left-radius: 8px;
 }
 
-.table th:last-child,
-.user-table th:last-child,
-.appointments-table th:last-child,
-.contracts-table th:last-child,
-.api-keys th:last-child,
-.logs-table th:last-child,
-.edit-table th:last-child,
-.commissioning-table th:last-child {
+.table th:last-child {
   border-top-right-radius: 8px;
 }
 
 /* Centra il contenuto della prima e ultima colonna */
 .table th:first-child,
-.table th:last-child,
-.user-table th:first-child,
-.user-table th:last-child,
-.appointments-table th:first-child,
-.appointments-table th:last-child,
-.contracts-table th:first-child,
-.contracts-table th:last-child,
-.api-keys th:first-child,
-.api-keys th:last-child,
-.logs-table th:first-child,
-.logs-table th:last-child,
-.edit-table th:first-child,
-.edit-table th:last-child,
-.commissioning-table th:first-child,
-.commissioning-table th:last-child {
+.table th:last-child {
   text-align: center;
   vertical-align: middle; /* Centra verticalmente */
 }
 
 /* Centra anche i dati nelle celle */
 .table td:first-child,
-.table td:last-child,
-.user-table td:first-child,
-.user-table td:last-child,
-.appointments-table td:first-child,
-.appointments-table td:last-child,
-.contracts-table td:first-child,
-.contracts-table td:last-child,
-.api-keys td:first-child,
-.api-keys td:last-child,
-.logs-table td:first-child,
-.logs-table td:last-child,
-.edit-table td:first-child,
-.edit-table td:last-child,
-.commissioning-table td:first-child,
-.commissioning-table td:last-child {
+.table td:last-child {
   text-align: center;
   vertical-align: middle; /* Centra verticalmente */
 }
 
 /* Hover sulle righe */
-.table tr:hover,
-.user-table tr:hover,
-.appointments-table tr:hover,
-.contracts-table tr:hover,
-.api-keys tr:hover,
-.logs-table tr:hover,
-.edit-table tr:hover,
-.commissioning-table tr:hover {
+.table tr:hover {
   background: #eef6f3;
 }
 
@@ -276,7 +206,7 @@ button {
   cursor: pointer;
   transition: opacity 0.1s ease;
   height: fit-content;
-  font-family: 'Poppins', sans-serif !important;
+  font-family: "Poppins", sans-serif !important;
   font-size: 0.85rem !important;
 }
 
@@ -321,15 +251,6 @@ button.function-button-danger {
   color: white;
   padding: 8px 14px;
   font-size: 0.85rem;
-}
-
-button.csv-button {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-button.csv-button:hover {
-  background-color: var(--hover-bg-color);
 }
 
 button.save-button {
@@ -656,12 +577,12 @@ pre {
 }
 
 button.csv-button {
-  background-color: #71b095;
+  background-color: var(--primary-color);
   color: white;
 }
 
 button.csv-button:hover {
-  background-color: #509873;
+  background-color: var(--hover-bg-color);
 }
 
 button.create-button {
@@ -720,7 +641,6 @@ ICONE
   color: #fff;
   font-size: 22px;
 }
-
 
 /* ==========================
       CLIENTS PAGE
@@ -1006,153 +926,134 @@ ICONE
   background-color: #ffffff;
 }
 
-
-
 /* ==========================
       RESPONSIVE MOBILE
       ========================== */
 
-      @media (max-width: 768px) {
-        /* --- Tabelle scrollabili --- */
-        .table,
-        .user-table,
-        .appointments-table,
-        .contracts-table,
-        .api-keys,
-        .logs-table,
-        .edit-table,
-        .commissioning-table,
-        .clients-page .results-table {
-          display: block;
-          width: 100%;
-          overflow-x: auto;
-          white-space: nowrap;
-          font-size: 13px;
-        }
-      
-        .table th,
-        .table td,
-        .user-table th,
-        .user-table td,
-        .appointments-table th,
-        .appointments-table td,
-        .contracts-table th,
-        .contracts-table td,
-        .api-keys th,
-        .api-keys td,
-        .logs-table th,
-        .logs-table td,
-        .edit-table th,
-        .edit-table td,
-        .commissioning-table th,
-        .commissioning-table td {
-          padding: 8px 10px;
-          font-size: 13px;
-        }
-      
-        /* --- Filtri e Form Input --- */
-        .filters {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-      
-        .filters label {
-          width: 100%;
-        }
-      
-        .filters input,
-        .filters select {
-          width: 100% !important;
-          max-width: 100%;
-        }
-      
-        /* --- Bottoni più grandi e distanziati --- */
-        button,
-        .filters button,
-        .pagination button {
-          font-size: 14px;
-          padding: 12px 18px;
-        }
-      
-        .actions {
-          flex-direction: column;
-          align-items: stretch;
-          gap: 12px;
-        }
-      
-        
-      
-        /* --- Header mobile spacing --- */
-        .header {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 10px;
-        }
-      
-        .clients-page .header-details {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 10px;
-        }
-      
-        /* --- Tabs verticali se necessario --- */
-        .clients-page .tabs {
-          flex-direction: column;
-          gap: 8px;
-        }
-      
-        /* --- Quote, greeting, etc... --- */
-        .sidebar-info,
-        .quote-box {
-          font-size: 13px;
-        }
-      
-        .sidebar-quote-wrapper {
-          padding: 12px;
-        }
-      
-        .user-greeting {
-          font-size: 0.95rem;
-        }
-      
-        /* --- Search bar adattata --- */
-        .clients-page .search-bar {
-          flex-direction: column;
-          align-items: stretch;
-        }
-      
-        .clients-page .search-bar input {
-          max-width: 100%;
-          width: 100%;
-        }
-      
-        .clients-page .reset-button {
-          width: 100%;
-          font-size: 15px;
-        }
-      
-        /* --- Tabella clienti dettagli verticalizzata --- */
-        .clients-page .client-details-table td:first-child {
-          width: 100%;
-          display: block;
-          background: #f0f0f0;
-          font-weight: 600;
-        }
-      
-        .clients-page .client-details-table td:last-child {
-          display: block;
-          margin-bottom: 12px;
-        }
-      
-        .clients-page .client-details-table tr {
-          display: block;
-          margin-bottom: 10px;
-          border: 1px solid #eee;
-          border-radius: 5px;
-          padding: 8px;
-        }
+@media (max-width: 768px) {
 
-        /* --- Modale responsivo --- */
+  .mobile-logo {
+    display: none;
+  }
+
+
+  /* --- Tabelle scrollabili --- */
+  .table,
+  .clients-page .results-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-size: 13px;
+  }
+
+  .table th,
+  .table td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  /* --- Filtri e Form Input --- */
+  .filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filters label {
+    width: 100%;
+  }
+
+  .filters input,
+  .filters select {
+    width: 100% !important;
+    max-width: 100%;
+  }
+
+  /* --- Bottoni più grandi e distanziati --- */
+  button,
+  .filters button,
+  .pagination button {
+    font-size: 14px;
+    padding: 12px 18px;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  /* --- Header mobile spacing --- */
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .clients-page .header-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* --- Tabs verticali se necessario --- */
+  .clients-page .tabs {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* --- Quote, greeting, etc... --- */
+  .sidebar-info,
+  .quote-box {
+    font-size: 13px;
+  }
+
+  .sidebar-quote-wrapper {
+    padding: 12px;
+  }
+
+  .user-greeting {
+    font-size: 0.95rem;
+  }
+
+  /* --- Search bar adattata --- */
+  .clients-page .search-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .clients-page .search-bar input {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .clients-page .reset-button {
+    width: 100%;
+    font-size: 15px;
+  }
+
+  /* --- Tabella clienti dettagli verticalizzata --- */
+  .clients-page .client-details-table td:first-child {
+    width: 100%;
+    display: block;
+    background: #f0f0f0;
+    font-weight: 600;
+  }
+
+  .clients-page .client-details-table td:last-child {
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .clients-page .client-details-table tr {
+    display: block;
+    margin-bottom: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 8px;
+  }
+
+  /* --- Modale responsivo --- */
   .modal-overlay {
     align-items: flex-start;
     padding-top: 40px;
@@ -1263,7 +1164,6 @@ ICONE
     text-align: center;
   }
 
-
   .filters-container {
     flex-direction: column;
     align-items: stretch;
@@ -1297,6 +1197,39 @@ ICONE
     justify-content: flex-start;
   }
 
-  
-      }
-      
+  button.in-grid,
+  button.in-grid-red,
+  button.in-grid-blue {
+    font-size: 14px; /* Leggermente più grande */
+    padding: 8px 10px; /* Più spazio per il dito */
+    min-width: 80px; /* Evita pulsanti larghi 2 lettere */
+    white-space: nowrap; /* Non mandarlo a capo */
+  }
+
+  button.csv-button {
+    display: none; /* Nascondi il pulsante CSV */
+  }
+
+  h1 {
+    font-size: 1.5rem; /* o anche meno, tipo 1.3rem */
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 500px) {
+  button.in-grid,
+  button.in-grid-red,
+  button.in-grid-blue {
+    display: block;
+    margin: 6px auto;
+    width: 100%;
+    max-width: 180px;
+  }
+}

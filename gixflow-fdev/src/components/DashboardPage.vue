@@ -7,7 +7,15 @@
       <div class="filter-bar">
         <label>Periodo:</label>
 
-        <flat-pickr v-model="selectedMonth" :config="configMonth" />
+        <!-- <flat-pickr v-model="selectedMonth" :config="configMonth" /> --> 
+
+        <!-- <input
+          type="month"
+          v-model="selectedMonth"
+          @change="fetchAllData"
+          class="month-picker"
+        /> -->
+        <MonthYearPicker v-model="selectedMonth" />
       </div>
     </div>
   </div>
@@ -114,28 +122,33 @@ dayjs.locale("it");
 import { defineComponent } from "vue";
 import VueApexCharts from "vue3-apexcharts";
 import SparkBox from "@/components/charts/SparkBox.vue";
+import MonthYearPicker from "@/components/charts/MonthYearPicker.vue";
+
+
+
 
 import "@/styles/global.css";
 import "@/styles/toast.css";
 
-import { ref } from "vue";
+/* import { ref } from "vue";
 import FlatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.min.css";
 import { Italian } from "flatpickr/dist/l10n/it.js";
 import "flatpickr/dist/plugins/monthSelect/style.css";
 import monthSelectPlugin from "flatpickr/dist/plugins/monthSelect";
 import "flatpickr/dist/themes/airbnb.css";
-
+ */
 export default defineComponent({
   name: "DashboardPage",
 
   components: {
-    FlatPickr,
+   // FlatPickr,
+   MonthYearPicker,
     apexchart: VueApexCharts,
     SparkBox,
   },
 
-  setup() {
+  /* setup() {
     const configMonth = ref({
       altInput: true,
       altFormat: "F Y", // es: "Aprile 2025"
@@ -152,7 +165,7 @@ export default defineComponent({
     });
 
     return { configMonth };
-  },
+  }, */
 
   data() {
     return {
@@ -918,6 +931,16 @@ export default defineComponent({
   grid-column: span 5;
 }
 
+.month-picker {
+  padding: 6px 12px;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  background: white;
+  color: #333;
+}
+
+
 h1 {
   text-align: center;
   color: #343a40;
@@ -1000,4 +1023,78 @@ p {
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
+
+
+@media (max-width: 768px) {
+  /* Contenitore griglie chart */
+  .charts-container {
+    grid-template-columns: 1fr !important;
+    padding: 0 8px;
+    gap: 16px;
+  }
+
+  .chart {
+    padding: 16px;
+    font-size: 14px;
+  }
+
+  /* Override larghezza colonne */
+  .wide-2,
+  .wide-3,
+  .wide-4,
+  .full-width {
+    grid-column: span 1 !important;
+  }
+
+  /* Titolo */
+  h1 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+
+  /* Paragrafi */
+  p {
+    font-size: 0.9rem;
+    margin-top: 8px;
+  }
+
+  /* Barra dei filtri */
+  .filter-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .filter-bar input[type="month"] {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+
+  /* Sparkline wrapper */
+  .sparkline-grid {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+    gap: 16px;
+  }
+
+  [class^="spark-"] {
+    padding: 16px;
+  }
+
+  [class^="spark-"]:hover {
+    transform: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Spark titles override (fallback per sicurezza) */
+  [class^="spark-"] :deep(h2) {
+    font-size: 1.1rem;
+  }
+
+  [class^="spark-"] :deep(p) {
+    font-size: 0.9rem;
+  }
+}
+
 </style>

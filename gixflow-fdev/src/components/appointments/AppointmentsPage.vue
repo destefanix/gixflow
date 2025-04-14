@@ -243,7 +243,7 @@
     </div>
 
     <!-- Tabella degli appuntamenti -->
-    <table class="appointments-table">
+    <table class="table">
       <thead>
         <tr>
           <th>ID</th>

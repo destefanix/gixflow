@@ -166,14 +166,23 @@
       <h3>Prodotti</h3>
 
       <!-- Bottone per aprire il modale -->
-      <form @submit.prevent class="file-upload-form">
+      <!-- <form @submit.prevent class="file-upload-form">
         <label class="file-input-label">
           <input type="button" @click="openProductModal" hidden />
           <i class="fas fa-box-open"></i> Aggiungi Prodotti
         </label>
+      </form> -->
+      <form @submit.prevent class="file-upload-form">
+        <button
+          type="button"
+          class="file-input-label"
+          @click="openProductModal"
+        >
+          <i class="fas fa-box-open"></i> Aggiungi Prodotti
+        </button>
       </form>
 
-      <table class="contracts-table">
+      <table class="table">
         <thead>
           <tr>
             <th>Vendor</th>
@@ -271,7 +280,7 @@
         <!-- Lista documenti già caricati -->
         <h3>Documenti esistenti</h3>
 
-        <table class="contracts-table">
+        <table class="table">
           <thead>
             <tr>
               <th>Nome File</th>
@@ -317,7 +326,7 @@
         </div>
 
         <!-- Sezione Selezione File -->
-        <form @submit.prevent class="file-upload-form">
+        <!-- <form @submit.prevent class="file-upload-form">
           <label class="file-input-label">
             <input
               type="file"
@@ -346,10 +355,46 @@
             />
             <i class="fas fa-upload"></i> Carica Documenti
           </label>
+        </form> -->
+
+        <form @submit.prevent class="file-upload-form">
+          <button
+            type="button"
+            class="file-input-label"
+            @click="triggerFileInput"
+          >
+            <i class="fas fa-upload"></i> Aggiungi File
+          </button>
+          <input
+            type="file"
+            multiple
+            @change="handleFileSelection"
+            ref="fileInput"
+            hidden
+            required
+          />
+
+          <button
+            type="button"
+            class="file-reset-label"
+            @click="resetFileSelection"
+          >
+            <i class="fas fa-trash"></i> Reset
+          </button>
+
+          <button
+            type="button"
+            class="file-upload-label"
+            :class="{ 'disabled-button': !canUploadFiles }"
+            @click="uploadSelectedFiles"
+            :disabled="!canUploadFiles"
+          >
+            <i class="fas fa-upload"></i> Carica Documenti
+          </button>
         </form>
 
         <!-- Lista file selezionati per l'upload -->
-        <table class="contracts-table" v-if="selectedFiles.length">
+        <table class="table" v-if="selectedFiles.length">
           <thead>
             <tr>
               <th>Nome File</th>
@@ -442,7 +487,7 @@
 
     <!-- Pulsanti Azioni -->
     <section class="action-buttons">
-      <form @submit.prevent class="file-upload-form">
+      <!-- <form @submit.prevent class="file-upload-form">
         <label class="file-input-label">
           <input type="button" @click="saveContract" hidden />
           <i class="fas fa-save"></i> Salva Contratto
@@ -457,6 +502,23 @@
           <input type="button" @click="goToContractList" hidden />
           <i class="fas fa-arrow-left"></i> Torna all'elenco contratti
         </label>
+      </form> -->
+      <form @submit.prevent class="file-upload-form">
+        <button type="button" class="file-input-label" @click="saveContract">
+          <i class="fas fa-save"></i> Salva Contratto
+        </button>
+
+        <button type="button" class="file-reset-label" @click="deleteContract">
+          <i class="fas fa-eraser"></i> Elimina Contratto
+        </button>
+
+        <button
+          type="button"
+          class="file-upload-label"
+          @click="goToContractList"
+        >
+          <i class="fas fa-arrow-left"></i> Torna all'elenco contratti
+        </button>
       </form>
     </section>
   </div>
@@ -983,6 +1045,10 @@ export default {
       } catch (error) {
         console.error("Errore nell'eliminazione del documento:", error);
       }
+    },
+
+    triggerFileInput() {
+      this.$refs.fileInput.click();
     },
 
     handleFileSelection(event) {

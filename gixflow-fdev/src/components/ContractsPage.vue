@@ -83,7 +83,7 @@
       <button @click="resetFilters">Reset</button>
     </div>
 
-    <table class="contracts-table">
+    <table class="table">
       <thead>
         <tr>
           <th>ID</th>

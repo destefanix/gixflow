@@ -36,7 +36,7 @@
     </div>
 
     <!-- Tabella degli utenti -->
-    <table class="user-table">
+    <table class="table">
       <thead>
         <tr>
           <th>ID</th>

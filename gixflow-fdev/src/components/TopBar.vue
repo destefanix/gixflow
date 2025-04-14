@@ -12,8 +12,10 @@
     alt="Logo App" 
     class="mobile-logo" 
   /> -->
+  <div class="mobile-logo">
+          
   <h4>flow.</h4>
-       
+       </div>
       </div>
     </div>
 

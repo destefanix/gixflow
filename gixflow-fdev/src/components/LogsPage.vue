@@ -40,7 +40,7 @@
     </div>
 
    
-    <table class="logs-table">
+    <table class="table">
   <thead>
     <tr>
       <th>Timestamp</th>
@@ -302,14 +302,14 @@ export default {
 <style scoped>
 
 /* Tabella */
-.logs-table td:first-child {
+.table td:first-child {
   text-align: center !important;
   padding-left: 10px;
   /* font-weight: bold; */
   width: 180px;
 }
 
-.logs-table th:first-child {
+.table th:first-child {
   text-align: center !important;
   padding-left: 10px;
   width: 180px;
@@ -317,14 +317,14 @@ export default {
 }
 
 /* Centra le colonne Metodo, IP e Status */
-.logs-table td:nth-child(2),
-.logs-table td:nth-child(5),
-.logs-table td:nth-child(6),
-.logs-table td:nth-child(7),
-.logs-table th:nth-child(2),
-.logs-table th:nth-child(5),
-.logs-table th:nth-child(6),
-.logs-table th:nth-child(7) {
+.table td:nth-child(2),
+.table td:nth-child(5),
+.table td:nth-child(6),
+.table td:nth-child(7),
+.table th:nth-child(2),
+.table th:nth-child(5),
+.table th:nth-child(6),
+.table th:nth-child(7) {
 
   text-align: center !important;
 }

@@ -5,7 +5,7 @@
       <div class="actions"></div>
     </div>
 
-    <table v-if="apiKeys.length > 0" class="api-keys-table">
+    <table v-if="apiKeys.length > 0" class="table">
       <thead>
         <tr>
           <th>API Key</th>

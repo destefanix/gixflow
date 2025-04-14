@@ -71,7 +71,7 @@
     </div>
 
     <!-- Tabella Prodotti -->
-    <table class="commissioning-table">
+    <table class="table">
       <thead>
         <tr>
           <th>ID</th>

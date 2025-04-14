@@ -18,7 +18,7 @@
       />
 
       <!-- Tabella appuntamenti -->
-      <table class="contracts-table">
+      <table class="table">
         <thead>
           <tr>
             <th>ID</th>
@@ -307,7 +307,7 @@
 
       <!-- Lista Prodotti Selezionati -->
       <table
-        class="contracts-table"
+        class="table"
         v-if="contractProducts.length || stagedProducts.length"
       >
         <thead>
@@ -383,7 +383,7 @@
       </form>
 
       <!-- Lista file selezionati -->
-      <table class="contracts-table" v-if="selectedFiles.length">
+      <table class="table" v-if="selectedFiles.length">
         <thead>
           <tr>
             <th>Nome File</th>
@@ -464,7 +464,7 @@
           </div>
 
           <!-- Dati  -->
-          <table class="contracts-table">
+          <table class="table">
             <thead>
               <tr>
                 <th>Cliente</th>
@@ -482,7 +482,7 @@
           <!-- Prodotti Selezionati -->
           <section class="modal-section">
             <h3 class="modal-section-title">Prodotti Selezionati</h3>
-            <table class="contracts-table">
+            <table class="table">
               <thead>
                 <tr>
                   <th>Prodotto</th>
@@ -511,7 +511,7 @@
           <!-- Documenti Allegati -->
           <section class="modal-section">
             <h3 class="modal-section-title">Documenti Allegati</h3>
-            <table class="contracts-table">
+            <table class="table">
               <thead>
                 <tr>
                   <th>Nome File</th>

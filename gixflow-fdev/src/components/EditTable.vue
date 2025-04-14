@@ -5,7 +5,7 @@
     <!-- Tabella Dati -->
     <div v-if="isLoading" class="loading-spinner">Caricamento...</div>
     <div class="table-container">
-      <table class="edit-table">
+      <table class="table">
         <thead>
           <tr>
             <th v-for="column in columns" :key="column">{{ column }}</th>
@@ -174,8 +174,8 @@ export default {
 <style scoped>
 
 /* Celle */
-.edit-table th,
-.edit-table td {
+.table th,
+.table td {
   padding: 10px;
   border-bottom: 1px solid #ddd;
   white-space: nowrap;
@@ -190,7 +190,7 @@ export default {
   justify-content: center;
 } */
 
-.edit-table-container {
+.table-container {
   width: 95%;
   max-width: 100%;
   margin: 0 auto;
@@ -202,7 +202,7 @@ export default {
 
 
 /* Input dentro le celle */
-.editable-input {
+.input {
   width: 100%;
   padding: 6px;
   border: 1px solid #ddd;
