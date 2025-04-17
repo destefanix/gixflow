@@ -299,7 +299,7 @@
         :disabled="currentPage === 1"
         @click="changePage(currentPage - 1)"
       >
-        Precedente
+      <i class="fa-solid fa-backward-step"></i>
       </button>
 
       <span v-for="page in totalPages" :key="page">
@@ -315,7 +315,7 @@
         :disabled="currentPage === totalPages"
         @click="changePage(currentPage + 1)"
       >
-        Successivo
+      <i class="fa-solid fa-forward-step"></i>
       </button>
     </div>
 
@@ -702,33 +702,41 @@ export default {
         );
       }
     },
+  async fetchUsersByRole() {
+  try {
+    const response = await axios.get(
+      `${process.env.VUE_APP_API_URL}/users`
+    );
 
-    async fetchUsersByRole() {
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_API_URL}/users`
-        );
+    // Appiattisci l'array in caso di annidamento
+    const allUsers = Array.isArray(response.data)
+      ? response.data.flat()
+      : []; // Fallback per evitare errori se non è un array valido
 
-        // Appiattisci l'array in caso di annidamento
-        const allUsers = Array.isArray(response.data)
-          ? response.data.flat()
-          : []; // Fallback per evitare errori se non è un array valido
+    // Filtra per ruolo, rimuove duplicati e ordina alfabeticamente
+    this.operators = this.removeDuplicates(
+      allUsers.filter((user) => user.role_id === 1)
+    ).sort((a, b) => {
+      const nameA = `${a.cognome || ""} ${a.nome || ""}`.trim().toLowerCase();
+      const nameB = `${b.cognome || ""} ${b.nome || ""}`.trim().toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
 
-        // Filtra per ruolo e rimuove duplicati
-        this.operators = this.removeDuplicates(
-          allUsers.filter((user) => user.role_id === 1)
-        );
-        this.agents = this.removeDuplicates(
-          allUsers.filter((user) => user.role_id === 2)
-        );
-      } catch (error) {
-        this.$toast.show("Errore durante il caricamento degli utenti.", {
-          position: "bottom-right",
-          duration: 5000,
-          type: "error",
-        });
-      }
-    },
+    this.agents = this.removeDuplicates(
+      allUsers.filter((user) => user.role_id === 2)
+    ).sort((a, b) => {
+      const nameA = `${a.cognome || ""} ${a.nome || ""}`.trim().toLowerCase();
+      const nameB = `${b.cognome || ""} ${b.nome || ""}`.trim().toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  } catch (error) {
+    this.$toast.show("Errore durante il caricamento degli utenti.", {
+      position: "bottom-right",
+      duration: 5000,
+      type: "error",
+    });
+  }
+},
 
     async createAppointment() {
       try {
@@ -899,7 +907,7 @@ export default {
     },
 
     // Applicazione filtri nella tabella
-    applyFilters() {
+    /* applyFilters() {
       this.filteredAppointments = this.appointments.filter((appointment) => {
         const matchesAgent = this.filters.agent
           ? appointment.agent_id === parseInt(this.filters.agent)
@@ -929,7 +937,45 @@ export default {
           matchesStatus
         );
       });
-    },
+    }, */
+
+    applyFilters() {
+  this.filteredAppointments = this.appointments.filter((appointment) => {
+    const matchesAgent = this.filters.agent
+      ? appointment.agent_id === parseInt(this.filters.agent)
+      : true;
+
+    const matchesOperator = this.filters.operator
+      ? appointment.operator_id === parseInt(this.filters.operator)
+      : true;
+
+    const matchesDateStart = this.filters.dateStart
+      ? moment(appointment.date_start).isSameOrAfter(
+          moment(this.filters.dateStart),
+          "day"
+        )
+      : true;
+
+    const matchesDateEnd = this.filters.dateEnd
+      ? moment(appointment.date_end).isSameOrBefore(
+          moment(this.filters.dateEnd),
+          "day"
+        )
+      : true;
+
+    const matchesStatus = this.filters.status_id
+      ? appointment.status_id === parseInt(this.filters.status_id)
+      : true;
+
+    return (
+      matchesAgent &&
+      matchesOperator &&
+      matchesDateStart &&
+      matchesDateEnd &&
+      matchesStatus
+    );
+  });
+},
 
     // Resetta tutti i filtri
     resetFilters() {

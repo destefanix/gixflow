@@ -974,12 +974,21 @@ p {
   font-size: 1rem;
 }
 
-.sparkline-grid {
+/* .sparkline-grid {
   display: grid;
   max-width: 75%;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 24px;
   padding-bottom: 24px;
+} */
+
+.sparkline-grid {
+  display: grid;
+  max-width: 75%; /* Mantiene la larghezza massima */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Riduce la larghezza minima */
+  gap: 12px; /* Riduce lo spazio tra gli elementi */
+  padding-bottom: 16px; /* Riduce il padding inferiore */
+
 }
 
 .spark-0 {
@@ -1016,6 +1025,7 @@ p {
 [class^="spark-"] :deep(h2),
 [class^="spark-"] :deep(p) {
   color: white !important;
+
 }
 
 /* fallback per altri sparkline se mai ne avrai di più */
@@ -1080,6 +1090,7 @@ p {
 
   [class^="spark-"] {
     padding: 16px;
+    
   }
 
   [class^="spark-"]:hover {

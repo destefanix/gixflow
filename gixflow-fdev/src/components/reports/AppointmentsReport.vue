@@ -236,7 +236,7 @@
                 :disabled="currentPage === 1"
                 @click="changePage(currentPage - 1)"
               >
-                Precedente
+              <i class="fa-solid fa-backward-step"></i>
               </button>
 
               <span v-for="page in visiblePages" :key="page">
@@ -254,7 +254,7 @@
                 :disabled="currentPage === totalPages"
                 @click="changePage(currentPage + 1)"
               >
-                Successivo
+              <i class="fa-solid fa-forward-step"></i>
               </button>
             </div>
           </div>

@@ -8,6 +8,7 @@
 
 :root {
   --primary-color: #71b095;
+  --primary-color-dark: #578873;
   --secondary-color: #34495e;
   --danger-color: #c35573;
   --hover-bg-color: #5f8b7c;
@@ -56,31 +57,31 @@ small {
       MODALS
       ========================== */
 
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: flex-start; /* Allinea il modale in alto */
-        padding-top: 40px; /* Spazio sopra il modale */
-        overflow-y: auto; /* Permette lo scrolling */
-        z-index: 1000;
-      }
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Allinea il modale in alto */
+  padding-top: 40px; /* Spazio sopra il modale */
+  overflow-y: auto; /* Permette lo scrolling */
+  z-index: 1000;
+}
 
-      .modal-content {
-        background: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        width: 90%; /* Adatta la larghezza */
-        max-width: 900px; /* Limita la larghezza massima */
-        max-height: 90vh; /* Limita l'altezza massima */
-        overflow-y: auto; /* Aggiunge lo scrolling interno se necessario */
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      }
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%; /* Adatta la larghezza */
+  max-width: 900px; /* Limita la larghezza massima */
+  max-height: 90vh; /* Limita l'altezza massima */
+  overflow-y: auto; /* Aggiunge lo scrolling interno se necessario */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
 .modal-header,
 .modal-client-info {
@@ -146,7 +147,7 @@ legend {
       TABLE STYLES
       ========================== */
 
-.table {  
+.table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
@@ -725,8 +726,7 @@ ICONE
   overflow-y: auto;
   max-height: 55vh;
   margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  
 }
 
 /* Tabella risultati */
@@ -760,6 +760,7 @@ ICONE
 .clients-page .link-name {
   font-weight: 600;
   color: #2c3e50;
+  cursor: pointer;
 }
 
 .clients-page .link-name:hover {
@@ -944,17 +945,14 @@ ICONE
   margin: 4px 0;
 }
 
-
 /* ==========================
       RESPONSIVE MOBILE
       ========================== */
 
 @media (max-width: 768px) {
-
   .mobile-logo {
     display: none;
   }
-
 
   /* --- Tabelle scrollabili --- */
   .table,

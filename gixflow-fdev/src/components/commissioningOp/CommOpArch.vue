@@ -85,7 +85,7 @@
     <!-- PAGINAZIONE -->
     <div class="pagination" v-if="totalPages > 1">
       <button :disabled="currentPage === 1" @click="prevPage">
-        Precedente
+        <i class="fa-solid fa-backward-step"></i>
       </button>
       <span v-for="page in totalPages" :key="page">
         <button
@@ -96,7 +96,7 @@
         </button>
       </span>
       <button :disabled="currentPage === totalPages" @click="nextPage">
-        Successivo
+        <i class="fa-solid fa-forward-step"></i>
       </button>
     </div>
   </div>

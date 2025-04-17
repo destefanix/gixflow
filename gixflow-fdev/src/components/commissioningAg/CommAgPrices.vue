@@ -123,7 +123,7 @@
 
     <div class="pagination">
       <button :disabled="currentPage === 1" @click="prevPage">
-        Precedente
+        <i class="fa-solid fa-backward-step"></i>
       </button>
 
       <span v-for="page in totalPages" :key="page">
@@ -137,7 +137,7 @@
       </span>
 
       <button :disabled="currentPage === totalPages" @click="nextPage">
-        Successivo
+        <i class="fa-solid fa-forward-step"></i>
       </button>
     </div>
 

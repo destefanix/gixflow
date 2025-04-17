@@ -12,76 +12,73 @@
 
     <!-- Sezione Filtri -->
     <div class="filters">
-      <!-- Filtro per Cliente -->
-      <label>
-        Cerca:
-        <input
-          type="text"
-          v-model="filters.client"
-          placeholder="Ragione sociale, Partita IVA o Telefono..."
-          @input="debouncedSearch"
-        />
-      </label>
+  <!-- Filtro per Cliente -->
+  <label>
+    Cerca:
+    <input
+  type="text"
+  v-model="tempFilters.client"
+  placeholder="Ragione sociale, Partita IVA o Telefono..."
+  @input="debouncedSearch"
+/>
+  </label>
 
-      <!-- Filtro per Agente -->
-      <label>
-        Agente:
-        <select v-model="filters.agent" @change="applyFilters">
-          <option value="">Tutti</option>
-          <option v-for="agent in agents" :key="agent.id" :value="agent.id">
-            {{
-              agent.cognome
-                ? `${agent.cognome} ${agent.nome || ""}`
-                : "Senza Nome"
-            }}
-          </option>
-        </select>
-      </label>
+  <!-- Filtro per Agente -->
+  <label>
+    Agente:
+    <select v-model="tempFilters.agent">
+      <option value="">Tutti</option>
+      <option v-for="agent in agents" :key="agent.id" :value="agent.id">
+        {{
+          agent.cognome
+            ? `${agent.cognome} ${agent.nome || ""}`
+            : "Senza Nome"
+        }}
+      </option>
+    </select>
+  </label>
 
-      <!-- Filtro per Stato del Contratto -->
-      <label>
-        Stato:
-        <select v-model="filters.status_id">
-          <option value="">Tutti</option>
-          <option
-            v-for="status in contractStatuses"
-            :key="status.id"
-            :value="status.id"
-          >
-            {{ status.name }}
-          </option>
-        </select>
-      </label>
+  <!-- Filtro per Stato del Contratto -->
+  <label>
+    Stato:
+    <select v-model="tempFilters.status_id">
+      <option value="">Tutti</option>
+      <option
+        v-for="status in contractStatuses"
+        :key="status.id"
+        :value="status.id"
+      >
+        {{ status.name }}
+      </option>
+    </select>
+  </label>
 
-      <!-- Filtro per Data Inizio -->
-      <label>
-        Data Inizio:
-        <!-- <input type="date" v-model="filters.dateStart" /> -->
-        <flat-pickr
-          v-model="filters.dateStart"
-          @change="applyFilters"
-          :config="configDate"
-          class="custom-datepicker"
-          placeholder="Data inizio"
-        />
-      </label>
+  <!-- Filtro per Data Inizio -->
+  <label>
+    Data Inizio:
+    <flat-pickr
+      v-model="tempFilters.dateStart"
+      :config="configDate"
+      class="custom-datepicker"
+      placeholder="Data inizio"
+    />
+  </label>
 
-      <!-- Filtro per Data Fine -->
-      <label>
-        Data Fine:
-        <!-- <input type="date" v-model="filters.dateEnd" /> -->
-        <flat-pickr
-          v-model="filters.dateEnd"
-          :config="configDate"
-          class="custom-datepicker"
-          placeholder="Data fine"
-        />
-      </label>
+  <!-- Filtro per Data Fine -->
+  <label>
+    Data Fine:
+    <flat-pickr
+      v-model="tempFilters.dateEnd"
+      :config="configDate"
+      class="custom-datepicker"
+      placeholder="Data fine"
+    />
+  </label>
 
-      <!-- Pulsanti -->
-      <button @click="applyFilters">Applica Filtri</button>
-      <button @click="resetFilters">Reset</button>
-    </div>
+  <!-- Pulsanti -->
+  <button @click="applyFilters">Applica Filtri</button>
+  <button @click="resetFilters">Reset</button>
+</div>
 
     <table class="table">
       <thead>
@@ -114,8 +111,8 @@
           </td>
           <td>{{ contract.status_name }}</td>
           <td>
-            <button @click="editContract(contract.id)" class="edit-btn">
-              Modifica
+            <button class="in-grid" @click="editContract(contract.id)" title="Modifica">
+              <i class="fa-solid fa-pen"></i>
             </button>
           </td>
         </tr>
@@ -125,11 +122,36 @@
         </tr>
       </tbody>
     </table>
+    <div class="pagination">
+  <button
+    :disabled="currentPage === 1"
+    @click="changePage(currentPage - 1)"
+  >
+    <i class="fa-solid fa-backward-step"></i>
+  </button>
+
+  <span v-for="page in totalPages" :key="page">
+    <button
+      :class="{ active: page === currentPage }"
+      @click="changePage(page)"
+    >
+      {{ page }}
+    </button>
+  </span>
+
+  <button
+    :disabled="currentPage === totalPages"
+    @click="changePage(currentPage + 1)"
+  >
+  <i class="fa-solid fa-forward-step"></i>
+  </button>
+</div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import moment from "moment";
 import "@/styles/global.css";
 
 import { ref } from "vue";
@@ -175,53 +197,75 @@ export default {
         dateStart: "",
         dateEnd: "",
       },
+      tempFilters: {
+        agent: "",
+        client: "",
+        status_id: "",
+        dateStart: "",
+        dateEnd: "",
+      },
       searchTimer: null, // Per gestire il debounce
+      currentPage: 1, // Pagina corrente
+      itemsPerPage: 10, // Numero di contratti per pagina
     };
   },
 
   computed: {
+   
+
     filteredContracts() {
-      const searchQuery = this.filters.client.toLowerCase().trim();
-      const agentFilter = this.filters.agent;
-      const statusFilter = this.filters.status_id;
-      const dateStartFilter = this.filters.dateStart;
-      const dateEndFilter = this.filters.dateEnd;
+    const searchQuery = this.filters.client.toLowerCase().trim();
+    const agentFilter = this.filters.agent;
+    const statusFilter = this.filters.status_id;
+    const dateStartFilter = this.filters.dateStart;
+    const dateEndFilter = this.filters.dateEnd;
 
-      return this.contracts.filter((contract) => {
-        const matchesClient = searchQuery
-          ? (contract.client_name?.toLowerCase() || "").includes(searchQuery) ||
-            (contract.partita_iva || "").includes(searchQuery) ||
-            (contract.telefono || "").includes(searchQuery)
-          : true;
+    return this.contracts.filter((contract) => {
+      const matchesClient = searchQuery
+        ? (contract.client_name?.toLowerCase() || "").includes(searchQuery) ||
+          (contract.partita_iva || "").includes(searchQuery) ||
+          (contract.telefono || "").includes(searchQuery)
+        : true;
 
-        const matchesAgent = agentFilter
-          ? String(contract.agent_id) === String(agentFilter)
-          : true;
+      const matchesAgent = agentFilter
+        ? String(contract.agent_id) === String(agentFilter)
+        : true;
 
-        const matchesStatus = statusFilter
-          ? String(contract.status_id) === String(statusFilter)
-          : true;
+      const matchesStatus = statusFilter
+        ? String(contract.status_id) === String(statusFilter)
+        : true;
 
-        const contractDate = contract.creation_date
-          ? new Date(contract.creation_date)
-          : null;
+      const contractDate = contract.creation_date
+        ? moment(contract.creation_date, "YYYY-MM-DD")
+        : null;
 
-        const dateStart = dateStartFilter
-          ? this.parseDateFromInput(dateStartFilter)
-          : null;
+      const dateStart = dateStartFilter
+        ? moment(dateStartFilter, "DD/MM/YYYY")
+        : null;
 
-        const dateEnd = dateEndFilter
-          ? this.parseDateFromInput(dateEndFilter)
-          : null;
+      const dateEnd = dateEndFilter
+        ? moment(dateEndFilter, "DD/MM/YYYY").endOf("day")
+        : null;
 
-        const matchesDate =
-          contractDate &&
-          (!dateStart || contractDate >= dateStart) &&
-          (!dateEnd || contractDate <= dateEnd);
+      const matchesDate =
+        contractDate &&
+        (!dateStart || contractDate.isSameOrAfter(dateStart)) &&
+        (!dateEnd || contractDate.isSameOrBefore(dateEnd));
 
-        return matchesClient && matchesAgent && matchesStatus && matchesDate;
-      });
-    },
+      return matchesClient && matchesAgent && matchesStatus && matchesDate;
+    });
+  },
+
+  paginatedContracts() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.filteredContracts.slice(startIndex, endIndex);
+  },
+
+  totalPages() {
+    return Math.ceil(this.filteredContracts.length / this.itemsPerPage);
+  },
+    
   },
 
   methods: {
@@ -314,9 +358,22 @@ export default {
     },
 
     applyFilters() {
-      // Se hai logica di refresh asincrona mettila qui (opzionale)
-      console.log("🔍 applyFilters chiamato!");
-    },
+    this.filters = { ...this.tempFilters }; // Copia i valori temporanei nei filtri effettivi
+    this.currentPage = 1; // Resetta alla prima pagina
+    console.log("🔍 Filtri applicati:", this.filters);
+  },
+
+  resetFilters() {
+    this.tempFilters = {
+      agent: "",
+      client: "",
+      status_id: "",
+      dateStart: "",
+      dateEnd: "",
+    };
+    this.filters = { ...this.tempFilters }; // Resetta anche i filtri effettivi
+    this.currentPage = 1; // Resetta alla prima pagina
+  },
 
     parseDateFromInput(input) {
       if (!input) return null;
@@ -332,11 +389,12 @@ export default {
     },
 
     debouncedSearch() {
-      clearTimeout(this.searchTimer);
-      this.searchTimer = setTimeout(() => {
-        this.applyFilters(); // 👈 chiama qui
-      }, 300);
-    },
+  clearTimeout(this.searchTimer);
+  this.searchTimer = setTimeout(() => {
+    this.filters.client = this.tempFilters.client.trim(); // Applica il filtro di ricerca
+    this.currentPage = 1; // Resetta alla prima pagina
+  }, 300);
+},
 
     editContract(contractId) {
       console.log("🛠️ Modifica contratto con ID:", contractId);
@@ -346,21 +404,19 @@ export default {
       });
     },
 
-    resetFilters() {
-      this.filters = {
-        agent: "",
-        client: "",
-        status_id: "",
-        dateStart: "",
-        dateEnd: "",
-      };
-    },
+
 
     formatDate(dateString) {
       if (!dateString) return "-";
       const date = new Date(dateString);
       return date.toLocaleDateString("it-IT");
     },
+
+    changePage(page) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  },
   },
 
   mounted() {

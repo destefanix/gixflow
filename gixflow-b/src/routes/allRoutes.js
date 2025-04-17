@@ -22,6 +22,8 @@ const reportsController = require("../controllers/reportsController");
 // IMPORT DEI MIDDLEWARE
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
+const apiKeyMidleware = require("../middleware/apiKeyMiddleware");
+const apiKeyMiddleware = require("../middleware/apiKeyMiddleware");
 
 // AUTH & USERS
 router.post("/register", authMiddleware, authController.register);
@@ -54,6 +56,7 @@ router.get('/appointments/with-clients', authMiddleware, roleMiddleware(4, 5), a
 router.get('/appointments/export', authMiddleware, roleMiddleware(4, 5), appointmentsController.exportAppointmentsCSV);
 router.get("/appointment-status", authMiddleware, roleMiddleware(4, 5), appointmentsController.getAppointmentStatuses);
 router.post('/appointments', authMiddleware, roleMiddleware(4, 5), appointmentsController.createAppointment);
+router.post('/appointments-from-source', apiKeyMiddleware, appointmentsController.createAppointment);
 router.put('/appointments/:id', authMiddleware, roleMiddleware(4, 5), appointmentsController.updateAppointment);
 router.put('/appointments-clickfc/:id', authMiddleware, roleMiddleware(4, 5), appointmentsController.updateAppointmentClickFC);
 router.put('/appointments-drop/:id', authMiddleware, roleMiddleware(4, 5), appointmentsController.updateAppointmentDrop);

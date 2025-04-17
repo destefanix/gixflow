@@ -221,14 +221,14 @@
     <!-- Paginazione -->
     <div class="pagination" v-if="totalPages > 1">
       <button @click="changePage('prev')" :disabled="currentPage === 1">
-        ◀️ Precedente
+        <i class="fa-solid fa-backward-step"></i>
       </button>
       <span>Pagina {{ currentPage }} di {{ totalPages }}</span>
       <button
         @click="changePage('next')"
         :disabled="currentPage === totalPages"
       >
-        Successivo ▶️
+      <i class="fa-solid fa-forward-step"></i>
       </button>
     </div>
   </div>

@@ -129,14 +129,14 @@
             </div>
 
             <div class="pagination">
-              <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)">Precedente</button>
+              <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)"><i class="fa-solid fa-backward-step"></i></button>
               <span v-for="page in visiblePages" :key="page">
                 <button v-if="page !== '...'" :class="{ active: page === currentPage }" @click="changePage(page)">
                   {{ page }}
                 </button>
                 <span v-else class="ellipsis">...</span>
               </span>
-              <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)">Successivo</button>
+              <button :disabled="currentPage === totalPages" @click="changePage(currentPage + 1)"><i class="fa-solid fa-forward-step"></i></button>
             </div>
           </div>
         </div>

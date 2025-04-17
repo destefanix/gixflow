@@ -8,9 +8,9 @@
       'topbar-open': $route.meta.requiresTopbar !== false,
       'login-page': $route.path === '/login',
       'sidebar-collapsed': isSidebarCollapsed,
+      'calendar-page': $route.path === '/calendar', // Aggiunta per la pagina calendario
     }"
   >
-  
     <SideBar
       v-if="$route.meta.requiresSidebar !== false"
       :is-collapsed="isSidebarCollapsed"
@@ -27,6 +27,7 @@
 
     <!-- Login page: solo router-view -->
     <router-view v-if="$route.path === '/login'" />
+  
 
     <!-- Layout standard: contenuto dentro main-content -->
     <div v-else class="main-content">
@@ -34,6 +35,9 @@
         <router-view />
       </div>
     </div>
+
+   
+
   </div>
 </template>
 
@@ -126,15 +130,25 @@ export default {
   overflow: auto;
 }
 
+#app.calendar-page .main-content {
+  max-width: 100vw;
+}
+
 /*  Contenitore dinamico */
  .content-wrapper {
-  width: 98%; 
-  max-width: 1800px; 
+  width: 98%;
+  max-width: 1800px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 25px;
-  flex-grow: 1; 
+  flex-grow: 1;
+} 
+
+/* Modificato per la pagina calendario, per evitare il padding */
+#app.calendar-page .content-wrapper {
+  box-shadow: none;
+  padding: 0px;
 } 
 
 /* Header */
@@ -193,7 +207,9 @@ h3 {
 }
 
 @media (max-width: 768px) {
-  html, body, #app {
+  html,
+  body,
+  #app {
     overflow-x: hidden;
     width: 100vw;
     position: relative;
@@ -255,8 +271,5 @@ h3 {
     background: rgba(0, 0, 0, 0.4);
     z-index: 1400;
   }
-
-  
 }
-
 </style>

@@ -179,6 +179,8 @@ export default {
     },
   },
 
+  emits: ["closeMobileSidebar"],
+
   data() {
     return {
       user: {

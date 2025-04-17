@@ -139,7 +139,7 @@ class Appointment {
     const conn = await pool.getConnection();
     try {
       const query = `
-          SELECT 
+        SELECT 
         a.id, 
         a.date_start, 
         a.date_end, 
@@ -158,22 +158,20 @@ class Appointment {
         c.city AS client_city,
         c.provincia AS client_province,
         c.cap AS client_cap,
-
+        ul.location AS operator_location_name, -- Nome della location
         a.creation_date,
         a.last_modified_date,
         a.created_by,
         a.updated_by,
-
         CONCAT(cb.cognome, ' ', cb.nome) AS created_by_name,
         CONCAT(ub.cognome, ' ', ub.nome) AS updated_by_name
-
       FROM appointments a
       LEFT JOIN clients c ON a.client_id = c.id
       LEFT JOIN legal_forms lf ON c.forma_giuridica_id = lf.id
-      LEFT JOIN users u ON a.operator_id = u.id
+      LEFT JOIN users u ON a.operator_id = u.id -- Join per ottenere i dettagli dell'operatore
+      LEFT JOIN user_locations ul ON u.location_id = ul.id -- Join per ottenere il nome della location
       LEFT JOIN users ua ON a.agent_id = ua.id
       LEFT JOIN appointment_status s ON a.status_id = s.id
-
       LEFT JOIN users cb ON a.created_by = cb.id
       LEFT JOIN users ub ON a.updated_by = ub.id
     `;

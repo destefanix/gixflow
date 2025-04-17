@@ -7,14 +7,18 @@
   }
   
   .custom-calendar {
-    font-family: "Open Sans", sans-serif;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .fc-license-message {
+    display: none !important;
   }
   
   .fc-event {
     background-color: #71b095 !important;
     border: none !important;
     color: white !important;
-    font-weight: bold;
+    /* font-weight: bold; */
   
     border-radius: 4px;
     text-align: left;
@@ -47,11 +51,13 @@
     display: block !important;
   }
 
-  .fc-timegrid-event {
+  /* Evento in calendario */
+
+  .fc-timegrid-event { 
     background-color: #71b095 !important;
     border: none !important;
     color: white !important;
-    font-weight: bold;
+    /* font-weight: bold; */
     padding-left: 6px;
     padding-top: 3px;
     border-radius: 4px;
@@ -61,9 +67,14 @@
     text-overflow: unset !important;
     display: block !important;
   }
+  
+  .fc-timegrid-event, .fc-timegrid-more-link {
+    font-size: 0.75em !important;
+  }
 
-  .fc-daygrid-day-events{
-    background-color: #fffef5 !important;
+  /* Sfondo eventi All-day (Parte superiore) */
+  .fc-daygrid-day-events{ 
+    background-color: #e7f3ee !important;
     border: none !important;
     color: white !important;
     font-weight: bold;
@@ -71,14 +82,35 @@
     text-align: left;
   }
 
+    /* Sfondo eventi All-day (Parte inferiore) */
   .fc-daygrid-day-frame{
-    background-color: #fffef5!important;
+    background-color: #e7f3ee!important;
     border: 1px !important;
     font-weight: bold;
     text-align: center;
   }
 
+  /* Sfondo eventi Current-day (Parte superiore) */
+  .fc-day-today {
+    background-color: #e7f3ee!important; 
+  }
 
+  .fc-timegrid-slot-label-frame .fc-scrollgrid-shrink-frame {
+    background-color: #f9f9f9 !important;
+    
+  }
+  .fc-timegrid-slot-label-cushion {
+    padding: 2px 4px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block !important;
+  }
+
+  .fc-scrollgrid-sync-inner {
+    font-size: 12px;
+  }
+
+  
   .fc-timegrid-slot:first-child {
     border-top: 1px solid #e0e0e0; /* Bordo superiore per la prima riga */
   }
@@ -171,3 +203,174 @@
     box-sizing: border-box;
   }
   
+
+
+.calendar-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%; /* Assicura che occupi tutta l'altezza */
+}
+
+.sidebar-multiselect {
+  width: 220px;
+  font-size: 0.7rem;
+  margin-bottom: 4px;
+  padding: 6px;
+  margin-right: 15px;
+  overflow-y: auto;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  overflow: auto;
+}
+
+.sidebar-multiselect h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.sidebar-multiselect button {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sidebar-multiselect button:hover {
+  background-color: #5a8a78;
+}
+
+.sidebar-multiselect ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-multiselect li {
+  padding: 6px; /* Ridotto da 8px a 6px */
+  margin-bottom: 4px; /* Ridotto da 5px a 4px */
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 0.7rem; /* Ridotta la dimensione del testo */
+}
+
+.sidebar-multiselect li:hover {
+  background-color: #e0e0e0;
+}
+.sidebar-multiselect li.selected {
+  background-color: #71b095;
+  color: white;
+  font-weight: bold;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px; /* Spaziatura tra i pulsanti */
+  margin-bottom: 10px; /* Spaziatura sotto i pulsanti */
+}
+
+.button-group button {
+  font-size: 0.7rem !important; /* Dimensione del testo */
+  flex: 1; /* I pulsanti occupano lo stesso spazio */
+  padding: 8px;
+  background-color: var(--secondary-color); /* Colore secondario */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.button-group button:hover {
+  background-color: var(--primary-color);
+}
+
+.mini-calendar {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.calendar-header {
+  display: flex;
+  background-color: var(--secondary-color);
+  color: white;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.calendar-header span {
+  font-size: 0.7rem; /* Dimensione del testo */
+  text-transform: uppercase; /* Mese in maiuscolo */
+}
+.calendar-header button {
+  background-color: transparent !important;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  row-gap: 1px; /* Riduce il gap verticale */
+}
+
+.calendar-day {
+  text-align: center;
+  font-weight: 500;
+  padding: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.calendar-day.selected {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 0.8rem;
+  color: var(--secondary-color);
+}
+
+.weekday {
+  padding: 5px 0;
+}
+
+.filter-section {
+  margin-bottom: 20px;
+}
+
+.filter-section select {
+  width: 100%;
+  padding: 8px;
+  font-size: 0.9rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.fc-customWeekButton-button:disabled {
+  background-color: #ccc !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}

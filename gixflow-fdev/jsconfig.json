@@ -24,6 +24,8 @@
     "node_modules",
     "src/components/ContractDetail.vue",
     "src/components/HelloWorld.vue",
-    "src/components/AppointmentsPage.vue"
+    "src/components/AppointmentsPage.vue",
+    "src/components/AppointmentsSchedules.vue",
+    "src/components/CalendarPage.vue"
   ]
 }
