@@ -156,10 +156,17 @@
 .sidebar.collapsed .submenu {
   display: none;
 }
+
+.sidebar .submenu li {
+  padding-left: 15px; /* Aggiunge padding verso destra */
+}
 /* Elementi menu del sottomenu */
 .sidebar .submenu li a {
   font-size: 12px;
+  
 }
+
+
 
 .sidebar-element {
   display: flex;

@@ -45,7 +45,9 @@
         <ul :class="['submenu', { open: subMenus.appointments }]">
           <li><router-link to="/calendar"><i class="fas fa-angle-right"></i>Calendario</router-link></li>
           <li><router-link to="/appointments"><i class="fas fa-angle-right"></i>Elenco Appuntamenti</router-link></li>
+          <li><router-link to="/planning"><i class="fas fa-angle-right"></i>Planning Agenti</router-link></li>
           <li><router-link to="/agenda-schedules"><i class="fas fa-angle-right"></i>Schedulazioni</router-link></li>
+          
         </ul>
       </li>
 

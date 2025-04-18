@@ -5,6 +5,7 @@ import DashboardPage from "../components/DashboardPage.vue";
 import AppointmentsPage from "../components/appointments/AppointmentsPage.vue";
 import AgendaSchedules from "../components/appointments/AgendaSchedules.vue";
 import CalendarPage from "../components/appointments/CalendarPage.vue";
+import PlanningPage from "../components/appointments/PlanningPage.vue";
 import SideBar from "../components/SideBar.vue";
 import TopBar from "../components/TopBar.vue";
 import UserManagement from "../components/UserManagement.vue";
@@ -38,6 +39,7 @@ const routes = [
   { path: "/appointments", name: "Appointments", component: AppointmentsPage, meta: { requiresSidebar: true, requiresAuth: true } },
   { path: "/agenda-schedules", name: "AgendaSchedule", component: AgendaSchedules, meta: { requiresSidebar: true, requiresAuth: true } },
   { path: "/calendar", name: "Calendar", component: CalendarPage, meta: { requiresSidebar: true, requiresAuth: true } },
+  { path: "/planning", name: "Planning", component: PlanningPage, meta: { requiresSidebar: true, requiresAuth: true } },
   { path: "/sidebar", name: "SideBar", component: SideBar, meta: { requiresSidebar: true, requiresAuth: true } },
   { path: "/topbar", name: "TopBar", component: TopBar, meta: { requiresSidebar: true, requiresAuth: true } },
   { path: "/reports", name: "Reports", component: ReportsPage, meta: { requiresSidebar: true, requiresAuth: true } },

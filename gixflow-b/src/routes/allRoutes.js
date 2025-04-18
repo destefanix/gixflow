@@ -17,6 +17,7 @@ const operatorsController = require("../controllers/operatorsController");
 const notificationsController = require("../controllers/notificationsController");
 const dashboardController = require("../controllers/dashboardController");
 const reportsController = require("../controllers/reportsController");
+const planningController = require("../controllers/planningController");
 
 
 // IMPORT DEI MIDDLEWARE
@@ -61,6 +62,15 @@ router.put('/appointments/:id', authMiddleware, roleMiddleware(4, 5), appointmen
 router.put('/appointments-clickfc/:id', authMiddleware, roleMiddleware(4, 5), appointmentsController.updateAppointmentClickFC);
 router.put('/appointments-drop/:id', authMiddleware, roleMiddleware(4, 5), appointmentsController.updateAppointmentDrop);
 router.delete('/appointments/:id', authMiddleware, roleMiddleware(4, 5), appointmentsController.deleteAppointment);
+
+// PLANNING AGENTI
+router.get('/agents-planning', authMiddleware, roleMiddleware(4, 5), planningController.getAllPlannings);
+router.post('/agents-planning', authMiddleware, roleMiddleware(4, 5), planningController.createPlanning);
+router.put('/agents-planning/:id', authMiddleware, roleMiddleware(4, 5), planningController.updatePlanning);
+router.delete('/agents-planning/:id', authMiddleware, roleMiddleware(4, 5), planningController.deletePlanning);
+router.get("/calendar-agents-planning", authMiddleware, planningController.getPlanningsForCalendar);
+
+
 
 // PROFILE & 2FA
 router.get("/user/me", authMiddleware, authController.getUserProfile);

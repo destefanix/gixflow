@@ -7,10 +7,8 @@
 
     <!-- Contenitore principale con Flexbox -->
     <div class="calendar-container">
-
       <!-- Barra laterale per il multi-select -->
       <div class="sidebar-multiselect">
-
         <!-- Calendarietto -->
         <h3>Vai a data</h3>
         <div class="mini-calendar">
@@ -171,7 +169,9 @@
                     >
                       {{
                         operator.cognome
-                          ?`${operator.cognome || ""} ${operator.nome || ""} (${operator.location_name || ""})`
+                          ? `${operator.cognome || ""} ${
+                              operator.nome || ""
+                            } (${operator.location_name || ""})`
                           : "Senza Nome"
                       }}
                     </option>
@@ -194,21 +194,22 @@
                     </option>
                   </select>
                 </label>
-
                 <label>
                   Data Inizio:
-                  <input
-                    type="datetime-local"
+
+                  <flat-pickr
                     v-model="selectedAppointment.date_start"
-                    required
+                    :config="configDateTime"
+                    class="custom-datepicker"
                   />
                 </label>
                 <label>
                   Data Fine:
-                  <input
-                    type="datetime-local"
+
+                  <flat-pickr
                     v-model="selectedAppointment.date_end"
-                    required
+                    :config="configDateTime"
+                    class="custom-datepicker"
                   />
                 </label>
                 <label>
@@ -274,18 +275,47 @@ import { defineComponent } from "vue";
 import FullCalendar from "@fullcalendar/vue3";
 import resourceTimeGridPlugin from "@fullcalendar/resource-timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+
 import axios from "axios";
 import moment from "moment-timezone";
 import "moment/locale/it"; // Importa la localizzazione italiana
 moment.locale("it"); // Imposta la lingua italiana
+
 import "@/styles/calendar.css";
+import tippy from "tippy.js";
+
+import { ref } from "vue";
+import FlatPickr from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.min.css";
+import { Italian } from "flatpickr/dist/l10n/it.js";
+import "flatpickr/dist/themes/dark.css";
 
 export default defineComponent({
   name: "CalendarView",
-  components: { FullCalendar },
+  components: { FullCalendar, FlatPickr },
+  setup() {
+    const configDate = ref({
+      dateFormat: "Y-m-d", // Formato coerente con il backend
+      altInput: true,
+      altFormat: "d/m/Y",
+      locale: Italian,
+    });
+
+    const configDateTime = ref({
+      enableTime: true, // Abilita l'orario
+      dateFormat: "Y-m-d H:i", // Formato per il backend
+      altInput: true,
+      altFormat: "d/m/Y H:i", // Formato visivo
+      time_24hr: true, // Mostra orario in formato 24 ore
+      locale: Italian,
+    });
+
+    return { configDate, configDateTime };
+  },
   data() {
     return {
       agents: [],
+      plannings: [],
 
       selectedDate: new Date(), // Data selezionata
       currentMonth: moment().format("MMMM"),
@@ -324,6 +354,7 @@ export default defineComponent({
         slotMaxTime: "20:00:00",
 
         allDaySlot: true,
+        nowIndicator: true,
         editable: true,
         eventResizableFromStart: false,
         eventDrop: this.handleEventDrop,
@@ -334,117 +365,6 @@ export default defineComponent({
           center: "title",
           right: "customDayButton customWeekButton",
         },
-
-        /* customButtons: {
-          customDayButton: {
-            text: "Giorno",
-            click: () => {
-              if (this.$refs.fullCalendar) {
-                const calendarApi = this.$refs.fullCalendar.getApi(); // Ottieni l'istanza di FullCalendar
-                calendarApi.changeView("resourceTimeGridDay"); // Cambia la vista in "Giorno"
-                console.log("Vista cambiata a: Giorno");
-              } else {
-                console.error("FullCalendar non è pronto.");
-              }
-            },
-          },
-
-          customWeekButton: {
-            text: "Settimana",
-            click: () => {
-              if (this.isWeekViewEnabled) {
-                const calendarApi = this.$refs.fullCalendar.getApi();
-                calendarApi.changeView("resourceTimeGridWeek"); // Cambia la vista in "Week"
-              } else {
-                this.$toast.show(
-                  "Seleziona un solo agente per abilitare la vista settimanale.",
-                  {
-                    position: "bottom-right",
-                    duration: 5000,
-                    type: "default",
-                  }
-                );
-              }
-            },
-          },
-
-          yesterday: {
-            text: "Ieri",
-            click: () => {
-              const calendarApi = this.$refs.fullCalendar.getApi();
-              const yesterday = moment().subtract(1, "day").toDate();
-              calendarApi.gotoDate(moment(yesterday).format("YYYY-MM-DD"));
-              this.selectedDate = yesterday;
-              this.selectedButton = "yesterday";
-              localStorage.setItem("selectedButton", "yesterday");
-              localStorage.setItem(
-                "selectedDate",
-                moment(yesterday).format("YYYY-MM-DD")
-              );
-              this.generateDaysInMonth();
-            },
-          },
-          today: {
-            text: "Oggi",
-            click: () => {
-              const calendarApi = this.$refs.fullCalendar.getApi();
-              calendarApi.today();
-              const today = new Date();
-              this.selectedDate = today;
-              this.selectedButton = "today";
-              localStorage.setItem("selectedButton", "today");
-              localStorage.setItem(
-                "selectedDate",
-                moment(today).format("YYYY-MM-DD")
-              );
-              this.generateDaysInMonth();
-            },
-          },
-          tomorrow: {
-            text: "Domani",
-            click: () => {
-              const calendarApi = this.$refs.fullCalendar.getApi();
-              const tomorrow = moment().add(1, "day").toDate();
-              calendarApi.gotoDate(moment(tomorrow).format("YYYY-MM-DD"));
-              this.selectedDate = tomorrow;
-              this.selectedButton = "tomorrow";
-              localStorage.setItem("selectedButton", "tomorrow");
-              localStorage.setItem(
-                "selectedDate",
-                moment(tomorrow).format("YYYY-MM-DD")
-              );
-              this.generateDaysInMonth();
-            },
-          },
-          prev: {
-            text: "Prev",
-            click: () => {
-              const calendarApi = this.$refs.fullCalendar.getApi();
-              calendarApi.prev(); // Sposta il calendario indietro
-              const currentDate = calendarApi.getDate(); // Ottieni la data corrente
-              this.selectedDate = currentDate;
-              localStorage.setItem(
-                "selectedDate",
-                moment(currentDate).format("YYYY-MM-DD")
-              ); // Salva la data
-              this.generateDaysInMonth();
-            },
-          },
-          next: {
-            text: "Next",
-            click: () => {
-              const calendarApi = this.$refs.fullCalendar.getApi();
-              calendarApi.next(); // Sposta il calendario avanti
-              const currentDate = calendarApi.getDate(); // Ottieni la data corrente
-              this.selectedDate = currentDate;
-              localStorage.setItem(
-                "selectedDate",
-                moment(currentDate).format("YYYY-MM-DD")
-              ); // Salva la data
-              this.generateDaysInMonth();
-            },
-          },
-        }, */
 
         customButtons: {
           customDayButton: {
@@ -476,6 +396,22 @@ export default defineComponent({
             click: null,
           },
         },
+        eventDidMount: (info) => {
+          const { event } = info;
+
+          if (event.extendedProps?.isPlanning) {
+            tippy(info.el, {
+              content: `<strong>Zona:</strong> ${
+                event.title
+              }<br><strong>Note:</strong> ${
+                event.extendedProps.notes || "Nessuna"
+              }`,
+              allowHTML: true,
+              placement: "top",
+              theme: "light",
+            });
+          }
+        },
         resources: [],
         events: [],
         height: "auto",
@@ -497,7 +433,6 @@ export default defineComponent({
           .includes(this.operatorSearch.toLowerCase())
       );
     },
-    // Filtraggio dinamico degli agenti
     filteredAgents() {
       return this.agents.filter((agent) =>
         (agent.name || agent.username || "")
@@ -608,6 +543,17 @@ export default defineComponent({
       }
     },
 
+    async fetchPlannings() {
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_API_URL}/calendar-agents-planning`
+        );
+        this.plannings = Array.isArray(response.data) ? response.data : [];
+      } catch (error) {
+        console.error("❌ Errore nel recupero dei planning:", error);
+      }
+    },
+
     async fetchAppointments() {
       try {
         const response = await axios.get(
@@ -618,7 +564,7 @@ export default defineComponent({
           return {
             id: appointment.id,
             location:
-              appointment.operator_location_name || "Sede non specificata", 
+              appointment.operator_location_name || "Sede non specificata",
             client_name: appointment.client_name || "N/A",
             client_forma_giuridica:
               appointment.client_forma_giuridica || "Non specificata",
@@ -707,6 +653,11 @@ export default defineComponent({
 
     handleEventClick(info) {
       const event = info.event;
+
+      if (event.extendedProps?.isPlanning) {
+        // Planning → solo tooltip, niente modale
+        return;
+      }
 
       this.selectedAppointment = {
         id: event.id,
@@ -805,14 +756,17 @@ export default defineComponent({
 
     async refreshData() {
       try {
-        
-
         await Promise.all([
-          this.fetchAgents(), 
-          this.fetchAppointments(), 
+          this.fetchAgents(),
+          this.fetchAppointments(),
+          this.fetchPlannings(), // anche il planning se lo usi visivamente
         ]);
 
-        this.updateCalendarData(); 
+        if (this.selectedLocation) {
+          this.filterByLocation(); // 🔁 riapplica il filtro sede
+        } else {
+          this.updateCalendarData(); // default: mostra tutto
+        }
 
         this.$toast.show("Dati aggiornati.", {
           position: "bottom-right",
@@ -834,6 +788,7 @@ export default defineComponent({
         ? this.selectedAgentIds
         : this.agents.map((agent) => agent.id);
 
+      // Resources: agenti visibili
       this.calendarOptions.resources = this.agents
         .filter((agent) => visibleAgentIds.includes(agent.id))
         .map((agent) => ({
@@ -841,7 +796,8 @@ export default defineComponent({
           title: `${agent.cognome || ""} ${agent.nome || ""}`.trim(),
         }));
 
-      this.calendarOptions.events = this.appointments
+      // Appuntamenti (convertiti in eventi)
+      const appointmentEvents = this.appointments
         .filter((appt) => visibleAgentIds.includes(appt.agent_id))
         .map((appt) => ({
           id: appt.id,
@@ -852,43 +808,68 @@ export default defineComponent({
             .toISOString(),
           end: moment.tz(appt.date_end, "UTC").tz("Europe/Rome").toISOString(),
           resourceId: appt.agent_id,
-          extendedProps: {
-            ...appt,
-          },
+          extendedProps: { ...appt },
         }));
+
+      // Pianificazioni già formattate correttamente (ma filtriamole lo stesso)
+      /* const planningEvents = this.plannings.filter((p) =>
+        visibleAgentIds.includes(p.resourceId)
+      ); */
+
+      const planningEvents = this.plannings
+        .filter((p) => visibleAgentIds.includes(p.resourceId))
+        .map((p) => ({
+          ...p,
+          editable: false, // ❌ non trascinabile
+          durationEditable: false, // ❌ non ridimensionabile
+          classNames: ["fc-planning-event"], // 🎨 per styling
+          display: "auto",
+        }));
+
+      // Combina entrambi
+      this.calendarOptions.events = [...appointmentEvents, ...planningEvents];
     },
 
     filterByLocation() {
-      // Salva la location selezionata nel localStorage
+      // Salva la sede selezionata nel localStorage
       localStorage.setItem("selectedLocation", this.selectedLocation);
 
-      if (this.selectedLocation) {
-        // Filtra per la sede selezionata
-        this.calendarOptions.events = this.appointments
-          .filter((appt) => appt.location === this.selectedLocation)
-          .map((appt) => ({
-            id: appt.id,
-            title: appt.client_name || "Appuntamento",
-            start: moment
-              .tz(appt.date_start, "UTC")
-              .tz("Europe/Rome")
-              .toISOString(),
-            end: moment
-              .tz(appt.date_end, "UTC")
-              .tz("Europe/Rome")
-              .toISOString(),
-            resourceId: appt.agent_id,
-            extendedProps: {
-              ...appt,
-            },
-          }));
-      } else {
-        // Mostra tutti gli appuntamenti
-        this.updateCalendarData();
-      }
+      const visibleAgentIds = this.selectedAgentIds.length
+        ? this.selectedAgentIds
+        : this.agents.map((a) => a.id);
+
+      // Filtra appuntamenti
+      const filteredAppointments = this.selectedLocation
+        ? this.appointments.filter(
+            (appt) =>
+              appt.location === this.selectedLocation &&
+              visibleAgentIds.includes(appt.agent_id)
+          )
+        : this.appointments.filter((appt) =>
+            visibleAgentIds.includes(appt.agent_id)
+          );
+
+      const appointmentEvents = filteredAppointments.map((appt) => ({
+        id: appt.id,
+        title: appt.client_name || "Appuntamento",
+        start: moment
+          .tz(appt.date_start, "UTC")
+          .tz("Europe/Rome")
+          .toISOString(),
+        end: moment.tz(appt.date_end, "UTC").tz("Europe/Rome").toISOString(),
+        resourceId: appt.agent_id,
+        extendedProps: { ...appt },
+      }));
+
+      // Sempre mostra planning legati agli agenti visibili (NON filtrare per sede)
+      const planningEvents = this.plannings.filter((p) =>
+        visibleAgentIds.includes(p.resourceId)
+      );
+
+      // Combina
+      this.calendarOptions.events = [...appointmentEvents, ...planningEvents];
     },
 
-    // Converti la data dal backend (UTC) al fuso locale per la visualizzazione
     formatDateTime(dateString) {
       if (!dateString) return "N/A";
 
@@ -898,20 +879,17 @@ export default defineComponent({
         .format("DD/MM/YYYY HH:mm");
     },
 
-    // Converte la data per essere usata in un campo datetime-local (input form)
     formatDateForInput(dateString) {
       if (!dateString) return "";
 
       return moment.utc(dateString).format("YYYY-MM-DDTHH:mm");
     },
 
-    // Converti la data locale in UTC prima di salvarla nel backend
     formatDateForBackend(dateString) {
       if (!dateString) return null;
       return dateString.replace("T", ":") + ":00";
     },
 
-    // Converti la data locale in UTC prima di salvarla nel backend
     formatDateForBackendResDrop(dateString) {
       if (!dateString) return null;
 
@@ -1016,119 +994,134 @@ export default defineComponent({
     },
 
     changeToDayView() {
-    const calendarApi = this.$refs.fullCalendar?.getApi();
-    if (!calendarApi) return console.error("FullCalendar non inizializzato");
-    calendarApi.changeView("resourceTimeGridDay");
-  },
-  changeToWeekView() {
-    if (this.isWeekViewEnabled) {
       const calendarApi = this.$refs.fullCalendar?.getApi();
       if (!calendarApi) return console.error("FullCalendar non inizializzato");
-      calendarApi.changeView("resourceTimeGridWeek");
-    } else {
-      this.$toast.show("Seleziona un solo agente per abilitare la vista settimanale.", {
-        position: "bottom-right",
-        duration: 5000,
-        type: "default",
-      });
-    }
-  },
-  changeToYesterday() {
-    const calendarApi = this.$refs.fullCalendar?.getApi();
-    if (!calendarApi) return console.error("FullCalendar non inizializzato");
-    const yesterday = moment().subtract(1, "day").toDate();
-    calendarApi.gotoDate(moment(yesterday).format("YYYY-MM-DD"));
-    this.selectedDate = yesterday;
-    this.selectedButton = "yesterday";
-    localStorage.setItem("selectedButton", "yesterday");
-    localStorage.setItem("selectedDate", moment(yesterday).format("YYYY-MM-DD"));
-    this.generateDaysInMonth();
-  },
-  changeToToday() {
-    const calendarApi = this.$refs.fullCalendar?.getApi();
-    if (!calendarApi) return console.error("FullCalendar non inizializzato");
-    calendarApi.today();
-    const today = new Date();
-    this.selectedDate = today;
-    this.selectedButton = "today";
-    localStorage.setItem("selectedButton", "today");
-    localStorage.setItem("selectedDate", moment(today).format("YYYY-MM-DD"));
-    this.generateDaysInMonth();
-  },
-  changeToTomorrow() {
-    const calendarApi = this.$refs.fullCalendar?.getApi();
-    if (!calendarApi) return console.error("FullCalendar non inizializzato");
-    const tomorrow = moment().add(1, "day").toDate();
-    calendarApi.gotoDate(moment(tomorrow).format("YYYY-MM-DD"));
-    this.selectedDate = tomorrow;
-    this.selectedButton = "tomorrow";
-    localStorage.setItem("selectedButton", "tomorrow");
-    localStorage.setItem("selectedDate", moment(tomorrow).format("YYYY-MM-DD"));
-    this.generateDaysInMonth();
-  },
-  changeToPrev() {
-    const calendarApi = this.$refs.fullCalendar?.getApi();
-    if (!calendarApi) return console.error("FullCalendar non inizializzato");
-    calendarApi.prev();
-    const currentDate = calendarApi.getDate();
-    this.selectedDate = currentDate;
-    localStorage.setItem("selectedDate", moment(currentDate).format("YYYY-MM-DD"));
-    this.generateDaysInMonth();
-  },
-  changeToNext() {
-    const calendarApi = this.$refs.fullCalendar?.getApi();
-    if (!calendarApi) return console.error("FullCalendar non inizializzato");
-    calendarApi.next();
-    const currentDate = calendarApi.getDate();
-    this.selectedDate = currentDate;
-    localStorage.setItem("selectedDate", moment(currentDate).format("YYYY-MM-DD"));
-    this.generateDaysInMonth();
-  },
-  async initApp() {
-  await Promise.all([
-    this.fetchAgents(),
-    this.fetchOperators(),
-    this.fetchAppointments(),
-    this.fetchAppointmentStatuses(),
-    this.fetchLegalForms(),
-  ]);
+      calendarApi.changeView("resourceTimeGridDay");
+    },
+    changeToWeekView() {
+      if (this.isWeekViewEnabled) {
+        const calendarApi = this.$refs.fullCalendar?.getApi();
+        if (!calendarApi)
+          return console.error("FullCalendar non inizializzato");
+        calendarApi.changeView("resourceTimeGridWeek");
+      } else {
+        this.$toast.show(
+          "Seleziona un solo agente per abilitare la vista settimanale.",
+          {
+            position: "bottom-right",
+            duration: 5000,
+            type: "default",
+          }
+        );
+      }
+    },
+    changeToYesterday() {
+      const calendarApi = this.$refs.fullCalendar?.getApi();
+      if (!calendarApi) return console.error("FullCalendar non inizializzato");
+      const yesterday = moment().subtract(1, "day").toDate();
+      calendarApi.gotoDate(moment(yesterday).format("YYYY-MM-DD"));
+      this.selectedDate = yesterday;
+      this.selectedButton = "yesterday";
+      localStorage.setItem("selectedButton", "yesterday");
+      localStorage.setItem(
+        "selectedDate",
+        moment(yesterday).format("YYYY-MM-DD")
+      );
+      this.generateDaysInMonth();
+    },
+    changeToToday() {
+      const calendarApi = this.$refs.fullCalendar?.getApi();
+      if (!calendarApi) return console.error("FullCalendar non inizializzato");
+      calendarApi.today();
+      const today = new Date();
+      this.selectedDate = today;
+      this.selectedButton = "today";
+      localStorage.setItem("selectedButton", "today");
+      localStorage.setItem("selectedDate", moment(today).format("YYYY-MM-DD"));
+      this.generateDaysInMonth();
+    },
+    changeToTomorrow() {
+      const calendarApi = this.$refs.fullCalendar?.getApi();
+      if (!calendarApi) return console.error("FullCalendar non inizializzato");
+      const tomorrow = moment().add(1, "day").toDate();
+      calendarApi.gotoDate(moment(tomorrow).format("YYYY-MM-DD"));
+      this.selectedDate = tomorrow;
+      this.selectedButton = "tomorrow";
+      localStorage.setItem("selectedButton", "tomorrow");
+      localStorage.setItem(
+        "selectedDate",
+        moment(tomorrow).format("YYYY-MM-DD")
+      );
+      this.generateDaysInMonth();
+    },
+    changeToPrev() {
+      const calendarApi = this.$refs.fullCalendar?.getApi();
+      if (!calendarApi) return console.error("FullCalendar non inizializzato");
+      calendarApi.prev();
+      const currentDate = calendarApi.getDate();
+      this.selectedDate = currentDate;
+      localStorage.setItem(
+        "selectedDate",
+        moment(currentDate).format("YYYY-MM-DD")
+      );
+      this.generateDaysInMonth();
+    },
+    changeToNext() {
+      const calendarApi = this.$refs.fullCalendar?.getApi();
+      if (!calendarApi) return console.error("FullCalendar non inizializzato");
+      calendarApi.next();
+      const currentDate = calendarApi.getDate();
+      this.selectedDate = currentDate;
+      localStorage.setItem(
+        "selectedDate",
+        moment(currentDate).format("YYYY-MM-DD")
+      );
+      this.generateDaysInMonth();
+    },
+    async initApp() {
+      await Promise.all([
+        this.fetchAgents(),
+        this.fetchOperators(),
+        this.fetchAppointments(),
+        this.fetchPlannings(),
+        this.fetchAppointmentStatuses(),
+        this.fetchLegalForms(),
+      ]);
 
-  this.applySavedPreferences(); // <-- fondamentale qui
+      this.applySavedPreferences(); // <-- fondamentale qui
 
-  this.updateCalendarData(); // con agenti filtrati
-  this.filterByLocation(); // con location salvata
-},
+      this.updateCalendarData(); // con agenti filtrati
+      this.filterByLocation(); // con location salvata
+    },
 
-applySavedPreferences() {
-  try {
-    const savedAgentIds = localStorage.getItem("selectedAgentIds");
-    const savedLocation = localStorage.getItem("selectedLocation");
-    const savedDate = localStorage.getItem("selectedDate");
-    const savedButton = localStorage.getItem("selectedButton");
+    applySavedPreferences() {
+      try {
+        const savedAgentIds = localStorage.getItem("selectedAgentIds");
+        const savedLocation = localStorage.getItem("selectedLocation");
+        const savedDate = localStorage.getItem("selectedDate");
+        const savedButton = localStorage.getItem("selectedButton");
 
-    if (savedAgentIds) {
-      this.selectedAgentIds = JSON.parse(savedAgentIds);
-    }
+        if (savedAgentIds) {
+          this.selectedAgentIds = JSON.parse(savedAgentIds);
+        }
 
-    if (savedLocation) {
-      this.selectedLocation = savedLocation;
-    }
+        if (savedLocation) {
+          this.selectedLocation = savedLocation;
+        }
 
-    if (savedDate) {
-      this.selectedDate = moment(savedDate, "YYYY-MM-DD").toDate();
-    }
+        if (savedDate) {
+          this.selectedDate = moment(savedDate, "YYYY-MM-DD").toDate();
+        }
 
-    if (savedButton) {
-      this.selectedButton = savedButton;
-    }
+        if (savedButton) {
+          this.selectedButton = savedButton;
+        }
 
-    this.generateDaysInMonth(); // rigenera calendario mini
-  } catch (error) {
-    console.error("Errore nel recupero dati da localStorage:", error);
-  }
-},
-
-
+        this.generateDaysInMonth(); // rigenera calendario mini
+      } catch (error) {
+        console.error("Errore nel recupero dati da localStorage:", error);
+      }
+    },
   },
 
   mounted() {
@@ -1166,30 +1159,27 @@ applySavedPreferences() {
     }
 
     this.$nextTick(() => {
-    if (!this.$refs.fullCalendar?.getApi) {
-      console.warn("FullCalendar ancora non pronto in mounted");
-    }
-  });
-
-
+      if (!this.$refs.fullCalendar?.getApi) {
+        console.warn("FullCalendar ancora non pronto in mounted");
+      }
+    });
   },
   created() {
-  // Bind dei pulsanti custom
-  this.calendarOptions.customButtons.customDayButton.click = this.changeToDayView;
-  this.calendarOptions.customButtons.customWeekButton.click = this.changeToWeekView;
-  this.calendarOptions.customButtons.yesterday.click = this.changeToYesterday;
-  this.calendarOptions.customButtons.today.click = this.changeToToday;
-  this.calendarOptions.customButtons.tomorrow.click = this.changeToTomorrow;
-  this.calendarOptions.customButtons.prev.click = this.changeToPrev;
-  this.calendarOptions.customButtons.next.click = this.changeToNext;
+    // Bind dei pulsanti custom
+    this.calendarOptions.customButtons.customDayButton.click =
+      this.changeToDayView;
+    this.calendarOptions.customButtons.customWeekButton.click =
+      this.changeToWeekView;
+    this.calendarOptions.customButtons.yesterday.click = this.changeToYesterday;
+    this.calendarOptions.customButtons.today.click = this.changeToToday;
+    this.calendarOptions.customButtons.tomorrow.click = this.changeToTomorrow;
+    this.calendarOptions.customButtons.prev.click = this.changeToPrev;
+    this.calendarOptions.customButtons.next.click = this.changeToNext;
 
-  // Fetch e inizializzazioni
-  this.initApp(); // usa questo metodo definito sotto
-},
-
-
+    // Fetch e inizializzazioni
+    this.initApp(); // usa questo metodo definito sotto
+  },
 });
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
